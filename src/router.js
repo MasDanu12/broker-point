@@ -1,64 +1,29 @@
 import { handleFactories } from "./modules/factories.js";
 
 const modules = {
-  dashboard: "/api/dashboard",
-  factories: "/api/factories",
-  workers: "/api/workers",
-  models: "/api/models",
-  colors: "/api/colors",
-  rates: "/api/rates",
-  orders: "/api/orders",
-  receipts: "/api/receipts",
-  allocations: "/api/allocations",
-  outputs: "/api/outputs",
-  deliveries: "/api/deliveries",
-  inspections: "/api/inspections",
-  repairs: "/api/repairs",
-  payroll: "/api/payroll",
-  payments: "/api/payments",
-  bon: "/api/bon",
-  expenses: "/api/expenses",
-  reports: "/api/reports"
+  factories: handleFactories
 };
 
-export function getModuleRoute(path) {
-  for (const [name, route] of Object.entries(modules)) {
+export async function routeApi(request, env) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+
+  for (const [name, handler] of Object.entries(modules)) {
+    const route = `/api/${name}`;
+
     if (path === route || path.startsWith(`${route}/`)) {
-      return name;
+      return handler(request, env);
     }
   }
 
-  return null;
-}
-
-export function jsonResponse(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
+  return new Response(JSON.stringify({
+    success: false,
+    message: "Jalur API tidak ditemukan."
+  }), {
+    status: 404,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store"
     }
   });
-}
-
-export async function routeApi(request, env) {
-  const url = new URL(request.url);
-  const moduleName = getModuleRoute(url.pathname);
-
-  if (!moduleName) {
-    return jsonResponse({
-      success: false,
-      message: "Jalur API tidak ditemukan."
-    }, 404);
-  }
-
-  if (moduleName === "factories") {
-    return handleFactories(request, env);
-  }
-
-  return jsonResponse({
-    success: false,
-    module: moduleName,
-    message: "Modul belum diaktifkan."
-  }, 501);
 }
