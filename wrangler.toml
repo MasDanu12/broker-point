@@ -1,0 +1,14 @@
+name = "broker-point"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "broker-point-db"
+database_id = "ISI_DATABASE_ID_DARI_CLOUDFLARE"
+migrations_dir = "migrations"
