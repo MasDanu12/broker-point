@@ -23,6 +23,7 @@ export async function handleFactories(request, env) {
   const url = new URL(request.url);
   const id = url.pathname.split("/")[3];
 
+  // GET: daftar pabrik
   if (request.method === "GET" && !id) {
     const search = url.searchParams.get("search")?.trim() || "";
     const status = url.searchParams.get("status") || "";
@@ -67,6 +68,7 @@ export async function handleFactories(request, env) {
     });
   }
 
+  // GET: detail satu pabrik
   if (request.method === "GET" && id) {
     const factory = await env.DB
       .prepare("SELECT * FROM factories WHERE id = ?")
@@ -86,6 +88,7 @@ export async function handleFactories(request, env) {
     });
   }
 
+  // POST: tambah pabrik
   if (request.method === "POST" && !id) {
     let body;
 
@@ -141,6 +144,7 @@ export async function handleFactories(request, env) {
     }, 201);
   }
 
+  // PATCH: ubah data pabrik
   if (request.method === "PATCH" && id) {
     let body;
 
@@ -217,6 +221,7 @@ export async function handleFactories(request, env) {
     });
   }
 
+  // DELETE: nonaktifkan pabrik
   if (request.method === "DELETE" && id) {
     const result = await env.DB.prepare(`
       UPDATE factories
