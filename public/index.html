@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Broker Point</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, Arial, sans-serif;
+      background: #f4f7fb;
+      color: #172033;
+      display: grid;
+      place-items: center;
+    }
+
+    .shell {
+      width: min(720px, calc(100% - 32px));
+      background: #fff;
+      border-radius: 18px;
+      border: 1px solid #e7edf5;
+      box-shadow: 0 16px 48px rgba(18, 32, 58, .08);
+      padding: 36px 28px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      letter-spacing: -.6px;
+    }
+
+    p {
+      margin: 0 0 18px;
+      color: #5a6880;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      background: #172b4d;
+      color: white;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #edf2fa;
+      color: #172033;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <h1>Broker Point</h1>
+    <p>Admin dashboard sedang berjalan. Gunakan akses login untuk mengelola data produksi, upah, bon, dan laporan keuangan.</p>
+
+    <div class="actions">
+      <button type="button" onclick="BrokerAPI.logout()">Keluar</button>
+      <button type="button" class="secondary" onclick="window.location.href='/login.html'">Ke Halaman Login</button>
+    </div>
+  </div>
+
+  <script src="/assets/js/auth-guard.js"></script>
+  <script src="/assets/js/api.js"></script>
+</body>
+</html>
