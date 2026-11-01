@@ -1,3 +1,5 @@
+import { routeApi } from "./router.js";
+
 const json = (data, status = 200) => {
   return new Response(JSON.stringify(data), {
     status,
@@ -8,37 +10,26 @@ const json = (data, status = 200) => {
   });
 };
 
-async function handleApi(request, env) {
-  const url = new URL(request.url);
-  const path = url.pathname;
+async function handleHealth(env) {
+  try {
+    await env.DB.prepare("SELECT 1").first();
 
-  // Pemeriksaan koneksi aplikasi dan database
-  if (path === "/api/health" && request.method === "GET") {
-    try {
-      await env.DB.prepare("SELECT 1").first();
+    return json({
+      success: true,
+      app: "Broker Point",
+      database: "connected",
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Database health check:", error);
 
-      return json({
-        success: true,
-        app: "Broker Point",
-        database: "connected",
-        timestamp: new Date().toISOString()
-      });
-    } catch (error) {
-      return json({
-        success: false,
-        app: "Broker Point",
-        database: "error",
-        message: "Database belum dapat diakses."
-      }, 503);
-    }
+    return json({
+      success: false,
+      app: "Broker Point",
+      database: "error",
+      message: "Database belum dapat diakses."
+    }, 503);
   }
-
-  // API yang belum tersedia
-  return json({
-    success: false,
-    message: "API tidak ditemukan.",
-    path
-  }, 404);
 }
 
 export default {
@@ -46,12 +37,14 @@ export default {
     const url = new URL(request.url);
 
     try {
-      // Semua alamat API diproses oleh Worker
-      if (url.pathname.startsWith("/api/")) {
-        return await handleApi(request, env);
+      if (url.pathname === "/api/health") {
+        return await handleHealth(env);
       }
 
-      // Halaman website dilayani dari folder public
+      if (url.pathname.startsWith("/api/")) {
+        return await routeApi(request, env);
+      }
+
       return await env.ASSETS.fetch(request);
 
     } catch (error) {
@@ -64,12 +57,15 @@ export default {
         }, 500);
       }
 
-      return new Response("Terjadi kesalahan pada aplikasi.", {
-        status: 500,
-        headers: {
-          "Content-Type": "text/plain; charset=utf-8"
+      return new Response(
+        "Terjadi kesalahan pada aplikasi.",
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8"
+          }
         }
-      });
+      );
     }
   }
 };
