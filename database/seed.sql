@@ -8,18 +8,7 @@
 PRAGMA foreign_keys = ON;
 
 -- =========================================================
--- 01. USERS
--- =========================================================
-
-INSERT INTO users (id, username, password_hash, full_name, role, is_active)
-VALUES
-    ('usr_admin_001', 'admin', '$2a$10$abcdefghijklmnopqrstuv', 'Administrator', 'admin', 1),
-    ('usr_mgr_001', 'manager', '$2a$10$abcdefghijklmnopqrstuv', 'Manager Produksi', 'admin', 1),
-    ('usr_staff_001', 'staff01', '$2a$10$abcdefghijklmnopqrstuv', 'Staff Produksi', 'admin', 1)
-ON CONFLICT(id) DO NOTHING;
-
--- =========================================================
--- 02. SETTINGS
+-- 01. SETTINGS
 -- =========================================================
 
 INSERT INTO settings (key, value)
@@ -31,7 +20,7 @@ VALUES
 ON CONFLICT(key) DO NOTHING;
 
 -- =========================================================
--- 03. FACTORIES
+-- 02. FACTORIES
 -- =========================================================
 
 INSERT INTO factories (id, name, contact_person, phone, address, notes, status)
@@ -41,7 +30,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 04. WORKERS
+-- 03. WORKERS
 -- =========================================================
 
 INSERT INTO workers (id, name, phone, address, location, joined_at, notes, status)
@@ -52,7 +41,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 05. PRODUCT MODELS
+-- 04. PRODUCT MODELS
 -- =========================================================
 
 INSERT INTO product_models (id, code, name, description, status)
@@ -63,7 +52,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 06. PRODUCT COLORS
+-- 05. PRODUCT COLORS
 -- =========================================================
 
 INSERT INTO product_colors (id, name, color_code, status)
@@ -75,7 +64,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 07. RATE CARDS
+-- 06. RATE CARDS
 -- =========================================================
 
 INSERT INTO rate_cards (id, factory_id, worker_id, model_id, factory_rate, worker_rate, effective_from, effective_until, notes)
@@ -86,7 +75,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 08. FACTORY ORDERS
+-- 07. FACTORY ORDERS
 -- =========================================================
 
 INSERT INTO factory_orders (id, document_no, factory_id, order_date, due_date, status, notes)
@@ -103,7 +92,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 09. MATERIAL RECEIPTS
+-- 08. MATERIAL RECEIPTS
 -- =========================================================
 
 INSERT INTO material_receipts (id, document_no, factory_id, order_id, receipt_date, received_by, notes)
@@ -120,7 +109,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 10. WORK ALLOCATIONS
+-- 09. WORK ALLOCATIONS
 -- =========================================================
 
 INSERT INTO work_allocations (id, document_no, worker_id, allocation_date, notes)
@@ -138,7 +127,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 11. SEWING OUTPUTS
+-- 10. SEWING OUTPUTS
 -- =========================================================
 
 INSERT INTO sewing_outputs (id, document_no, worker_id, output_date, notes)
@@ -156,7 +145,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 12. FACTORY DELIVERIES
+-- 11. FACTORY DELIVERIES
 -- =========================================================
 
 INSERT INTO factory_deliveries (id, document_no, factory_id, delivery_date, delivery_status, notes)
@@ -173,7 +162,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 13. FACTORY INSPECTION
+-- 12. FACTORY INSPECTION
 -- =========================================================
 
 INSERT INTO factory_inspections (id, document_no, delivery_id, inspection_date, notes)
@@ -190,7 +179,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 14. REPAIR CASES
+-- 13. REPAIR CASES
 -- =========================================================
 
 INSERT INTO repair_cases (id, document_no, inspection_item_id, worker_id, repair_qty, reason, status, opened_at)
@@ -206,7 +195,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 15. FACTORY PAYMENTS
+-- 14. FACTORY PAYMENTS
 -- =========================================================
 
 INSERT INTO factory_payments (id, document_no, factory_id, delivery_id, payment_date, amount, payment_method, notes)
@@ -216,7 +205,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 16. PAYROLL PERIODS
+-- 15. PAYROLL PERIODS
 -- =========================================================
 
 INSERT INTO payroll_periods (id, period_start, period_end, status)
@@ -224,20 +213,32 @@ VALUES
     ('pay_period_001', '2026-10-01', '2026-10-31', 'draft')
 ON CONFLICT(id) DO NOTHING;
 
-INSERT INTO payroll_items (id, payroll_period_id, worker_id, output_item_id, eligible_qty, worker_rate, gross_amount, notes)
+-- Upah dihitung berdasarkan jumlah yang diterima pabrik.
+-- Rina: 60 pcs x Rp12.000 = Rp720.000
+-- Dewi: 50 pcs x Rp15.000 = Rp750.000
+-- Siti: 38 pcs x Rp13.000 = Rp494.000
+
+INSERT INTO payroll_items (
+    id, payroll_period_id, worker_id, output_item_id,
+    eligible_qty, worker_rate, gross_amount, notes
+)
 VALUES
-    ('pay_item_001', 'pay_period_001', 'wrk_001', 'so_itm_001', 70, 12000, 840000, 'Upah untuk batch pertama'),
-    ('pay_item_002', 'pay_period_001', 'wrk_002', 'so_itm_002', 55, 15000, 825000, 'Upah untuk batch kedua')
+    ('pay_item_001', 'pay_period_001', 'wrk_001', 'so_itm_001', 60, 12000, 720000, 'Upah berdasarkan 60 pcs diterima pabrik'),
+    ('pay_item_002', 'pay_period_001', 'wrk_002', 'so_itm_002', 50, 15000, 750000, 'Upah berdasarkan 50 pcs diterima pabrik'),
+    ('pay_item_003', 'pay_period_001', 'wrk_003', 'so_itm_003', 38, 13000, 494000, 'Upah berdasarkan 38 pcs diterima pabrik')
 ON CONFLICT(id) DO NOTHING;
 
-INSERT INTO worker_payments (id, document_no, worker_id, payroll_period_id, payment_date, amount, payment_method, notes)
+INSERT INTO worker_payments (
+    id, document_no, worker_id, payroll_period_id,
+    payment_date, amount, payment_method, notes
+)
 VALUES
     ('wp_001', 'WPAY-2026-0001', 'wrk_001', 'pay_period_001', '2026-10-20', 500000, 'transfer', 'Pembayaran sebagian upah'),
     ('wp_002', 'WPAY-2026-0002', 'wrk_002', 'pay_period_001', '2026-10-21', 400000, 'transfer', 'Pembayaran sebagian upah')
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 17. WORKER BON
+-- 16. WORKER BON
 -- =========================================================
 
 INSERT INTO worker_bon (id, document_no, worker_id, bon_date, category, description, amount, remaining_amount, status)
@@ -253,7 +254,7 @@ VALUES
 ON CONFLICT(id) DO NOTHING;
 
 -- =========================================================
--- 18. BUSINESS EXPENSES
+-- 17. BUSINESS EXPENSES
 -- =========================================================
 
 INSERT INTO business_expenses (id, document_no, expense_date, category, description, amount, recipient, notes)
