@@ -1,3 +1,5 @@
+import { handleFactories } from "./modules/factories.js";
+
 const modules = {
   dashboard: "/api/dashboard",
   factories: "/api/factories",
@@ -48,6 +50,10 @@ export async function routeApi(request, env) {
       success: false,
       message: "Jalur API tidak ditemukan."
     }, 404);
+  }
+
+  if (moduleName === "factories") {
+    return handleFactories(request, env);
   }
 
   return jsonResponse({
