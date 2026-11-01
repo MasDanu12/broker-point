@@ -5,6 +5,7 @@ import { handleColors } from "./modules/colors.js";
 import { handleRates } from "./modules/rates.js";
 import { handleOrders } from "./modules/orders.js";
 import { handleReceipts } from "./modules/receipts.js";
+import { handleOutputs } from "./modules/outputs.js";
 
 const modules = {
   factories: handleFactories,
@@ -19,6 +20,10 @@ const modules = {
 export async function routeApi(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
+
+  if (url.pathname === "/api/outputs" || url.pathname.startsWith("/api/outputs/")) {
+    return handleOutputs(request, env);
+  }
 
   for (const [name, handler] of Object.entries(modules)) {
     const route = `/api/${name}`;
