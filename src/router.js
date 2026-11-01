@@ -1,7 +1,13 @@
 import { handleFactories } from "./modules/factories.js";
+import { handleWorkers } from "./modules/workers.js";
+import { handleModels } from "./modules/models.js";
+import { handleColors } from "./modules/colors.js";
 
 const modules = {
-  factories: handleFactories
+  factories: handleFactories,
+  workers: handleWorkers,
+  models: handleModels,
+  colors: handleColors
 };
 
 export async function routeApi(request, env) {
