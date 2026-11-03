@@ -6,6 +6,7 @@ import { handleRates } from "./modules/rates.js";
 import { handleOrders } from "./modules/orders.js";
 import { handleReceipts } from "./modules/receipts.js";
 import { handleOutputs } from "./modules/outputs.js";
+import { handleAllocations } from "./modules/allocations.js";
 import { handleDeliveries } from "./modules/deliveries.js";
 import { handleInspections } from "./modules/inspections.js";
 import { handleRepairs } from "./modules/repairs.js";
@@ -42,6 +43,7 @@ export async function routeApi(request, env) {
   const path = url.pathname;
 
   const specialRoutes = [
+    "/api/allocations",
     "/api/outputs",
     "/api/deliveries",
     "/api/inspections",
@@ -57,6 +59,7 @@ export async function routeApi(request, env) {
 
   if (specialRoutes.some(route => url.pathname === route || url.pathname.startsWith(`${route}/`))) {
     const routeMap = {
+      "/api/allocations": handleAllocations,
       "/api/outputs": handleOutputs,
       "/api/deliveries": handleDeliveries,
       "/api/inspections": handleInspections,
