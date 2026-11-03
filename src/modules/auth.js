@@ -33,7 +33,7 @@ async function hashPassword(password, salt) {
   const bits = await crypto.subtle.deriveBits({
     name: "PBKDF2",
     salt: new TextEncoder().encode(salt),
-    iterations: 310000,
+    iterations: 100000,
     hash: "SHA-256"
   }, key, 256);
 
